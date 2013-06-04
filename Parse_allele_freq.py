@@ -16,7 +16,14 @@ line = infile.readline()
 while line:
     #totalLines += 1
     line = line.strip().replace('"','').split()
+    '''
+    If this is the first line, skip
+    '''
+    if line[0] == 'CHROM':
+        line = infile.readline()
+        continue
     chrom = 'chr'+line[0]
+    
     ''''
     -1 due to one based coordinates
     '''
@@ -29,7 +36,6 @@ while line:
         var = TempAltAllele[0]
         AlleleFreq = TempAltAllele[1]
         ref = origref
-       # var = obs[index-1]
         begpos = origbeg
         ref = origref
         start = 0
@@ -106,12 +112,7 @@ while line:
         outfile.write(chrom + "\t" + str(begpos) + "\t" + str(endpos) + "\t" + vartype + '\t' 
                                 + ref.strip() + "\t" + var.strip() + '\t' + AlleleFreq + "\n")
       
-	'''	
-	else:
-                    skips += 1
-                    print line    
-                    #it += 1
-	'''
+
     line = infile.readline()
     #it += 1
 infile.close()
