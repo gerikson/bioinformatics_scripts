@@ -24,8 +24,8 @@ counter_allele = 0
 while lin:
     counter_allele = counter_allele + 1
     line = lin.strip().split("\t")
-    templ = line[0]+"_"+line[1]+"_"+line[2]+"_"+line[3]+"_"+line[4]+"_"+line[5]
-    allele_dict[templ] = line[6]
+    templ = line[1]+"_"+line[2]+"_"+line[3]+"_"+line[4]+"_"+line[5]+"_"+line[6]
+    allele_dict[templ] = line[7]
     '''
     test, is anything happening
     '''
@@ -54,7 +54,7 @@ while lin:
     If this is the first line, skip
     '''
     if line[0] == 'chrom':
-        outfile.write(lin + '\t' + "Wellderly_AF325" + "\n")
+        outfile.write(lin + '\t' + "NHLBI" + "\n")
         lin = tabixfile.readline()
         continue
     else :
@@ -95,7 +95,7 @@ for key in allele_dict:
 	else:
 		new_key = new_key + 1
 		templine = key.split("_")
-		outfile.write(templine[0]+"\t"+templine[1]+"\t"+templine[2]+"\t"+templine[3]+"\t"+templine[4]+"\t"+templine[5]+"\t"+"N/A"+"\t"+"N/A"+"\t"+"N/A"+"\t"+"N/A"+"\t"+"N/A"+"\t"+"N/A"+"\t"+"N/A"+"\t"+"N/A"+"\t"+"N/A"+"\t"+"N/A"+"\t"+"N/A"+"\t"+"N/A"+"\t"+"N/A"+"\t"+"N/A"+"\t"+ allele_dict[key]+"\n")
+		outfile.write(templine[0]+"\t"+templine[1]+"\t"+templine[2]+"\t"+templine[3]+"\t"+templine[4]+"\t"+templine[5]+"\t"+"N/A"+"\t"+"N/A"+"\t"+"N/A"+"\t"+"N/A"+"\t"+"N/A"+"\t"+"N/A"+"\t"+"N/A"+"\t"+"N/A"+"\t"+"N/A"+"\t"+"N/A"+"\t"+"N/A"+"\t"+"N/A"+"\t"+"N/A"+"\t"+"N/A"+"\t"+ "N/A"+"\t"+allele_dict[key]+"\n")
 		continue
 
 print "key found " + str(key_found)
