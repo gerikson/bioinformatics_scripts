@@ -1,6 +1,7 @@
 #!/bin/csh
 
-python vcf_query_mongo_ACMG.py /gpfs/group/stsi/data/wellderly/CG_data/CG_chromosome/master2013_02_08_PASS_QC_hwe_CEU_noRel_snpEff_chr3.vcf.gz /gpfs/home/gerikson/wellderly_ACMG/SUMMARY_chr2.txt /gpfs/home/gerikson/wellderly_ACMG/notfound_chr2.txt
+python vcf_query_mongo_ACMG.py /gpfs/group/stsi/data/wellderly/CG_data/CG_chromosome/master2013_02_08_PASS_QC_hwe_CEU_noRel_snpEff_chr1.vcf.gz /gpfs/home/gerikson/wellderly_ACMG/SUMMARY_chr1.txt /gpfs/home/gerikson/wellderly_ACMG/notfound_chr1.txt
+python vcf_query_mongo_ACMG.py /gpfs/group/stsi/data/wellderly/CG_data/CG_chromosome/master2013_02_08_PASS_QC_hwe_CEU_noRel_snpEff_chr2.vcf.gz /gpfs/home/gerikson/wellderly_ACMG/SUMMARY_chr2.txt /gpfs/home/gerikson/wellderly_ACMG/notfound_chr2.txt
 python vcf_query_mongo_ACMG.py /gpfs/group/stsi/data/wellderly/CG_data/CG_chromosome/master2013_02_08_PASS_QC_hwe_CEU_noRel_snpEff_chr3.vcf.gz /gpfs/home/gerikson/wellderly_ACMG/SUMMARY_chr3.txt /gpfs/home/gerikson/wellderly_ACMG/notfound_chr3.txt
 python vcf_query_mongo_ACMG.py /gpfs/group/stsi/data/wellderly/CG_data/CG_chromosome/master2013_02_08_PASS_QC_hwe_CEU_noRel_snpEff_chr4.vcf.gz /gpfs/home/gerikson/wellderly_ACMG/SUMMARY_chr4.txt /gpfs/home/gerikson/wellderly_ACMG/notfound_chr4.txt
 python vcf_query_mongo_ACMG.py /gpfs/group/stsi/data/wellderly/CG_data/CG_chromosome/master2013_02_08_PASS_QC_hwe_CEU_noRel_snpEff_chr5.vcf.gz /gpfs/home/gerikson/wellderly_ACMG/SUMMARY_chr5.txt /gpfs/home/gerikson/wellderly_ACMG/notfound_chr5.txt
@@ -22,4 +23,4 @@ python vcf_query_mongo_ACMG.py /gpfs/group/stsi/data/wellderly/CG_data/CG_chromo
 python vcf_query_mongo_ACMG.py /gpfs/group/stsi/data/wellderly/CG_data/CG_chromosome/master2013_02_08_PASS_QC_hwe_CEU_noRel_snpEff_chr21.vcf.gz /gpfs/home/gerikson/wellderly_ACMG/SUMMARY_chr21.txt /gpfs/home/gerikson/wellderly_ACMG/notfound_chr21.txt
 python vcf_query_mongo_ACMG.py /gpfs/group/stsi/data/wellderly/CG_data/CG_chromosome/master2013_02_08_PASS_QC_hwe_CEU_noRel_snpEff_chr22.vcf.gz /gpfs/home/gerikson/wellderly_ACMG/SUMMARY_chr22.txt /gpfs/home/gerikson/wellderly_ACMG/notfound_chr22.txt
 python vcf_query_mongo_ACMG.py /gpfs/group/stsi/data/wellderly/CG_data/CG_chromosome/master2013_02_08_PASS_QC_hwe_CEU_noRel_snpEff_chrX.vcf.gz /gpfs/home/gerikson/wellderly_ACMG/SUMMARY_chrX.txt /gpfs/home/gerikson/wellderly_ACMG/notfound_chrX.txt
-python vcf_query_mongo_ACMG.py /gpfs/group/stsi/data/wellderly/CG_data/CG_chromosome/master2013_02_08_PASS_QC_hwe_CEU_noRel_snpEff_chrY.vcf.gz /gpfs/home/gerikson/wellderly_ACMG/SUMMARY_chrY.txt /gpfs/home/gerikson/wellderly_ACMG/notfound_chr1Y.txt
+python vcf_query_mongo_ACMG.py /gpfs/group/stsi/data/wellderly/CG_data/CG_chromosome/master2013_02_08_PASS_QC_hwe_CEU_noRel_snpEff_chrY.vcf.gz /gpfs/home/gerikson/wellderly_ACMG/SUMMARY_chrY.txt /gpfs/home/gerikson/wellderly_ACMG/notfound_chrY.txt
