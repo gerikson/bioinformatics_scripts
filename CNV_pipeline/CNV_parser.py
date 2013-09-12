@@ -6,7 +6,7 @@ September 10th 2013
 
 
 #!/usr/bin/python
-import sys, json
+import os, sys, json
 
 def transform_file(inLine):
     '''
@@ -14,10 +14,12 @@ def transform_file(inLine):
     '''
     
 inFilename = str(sys.argv[1])
-outFilename = str(sys.argv[2])
+#outFilename = str(sys.argv[2])
+outFilename = inFilename + "_out"
 
 inFile = open(inFilename)
 outFile = open(outFilename, 'w')
+QSUB = "qsub -q workq -M gerikson@scripps.edu -l cput=24:00:00 -l walltime=24:00:00 "
 
 header = "Haplotype       Chromosome      Begin   End     VarType Reference       Allele  Notes"
 outFile.write(header + "\n")
@@ -66,3 +68,23 @@ while inLine.strip() != '':
 
 inFile.close()
 outFile.close()
+
+command = "python /gpfs/home/gerikson/CNV_pipeline/dist_annotate.py " + outFilename + " hg19"
+ind1 = inFilename.rindex("/")
+ORIGDIR = inFilename[0:ind1+1]
+
+jobfile = ORIGDIR + "_parse.job"
+outjob = open(jobfile, 'w')
+outjob.write("#!/bin/csh\n")
+outjob.write("module load python-addons\n")
+outjob.write(command + "\n")
+outjob.close()
+
+execute = QSUB + "-e " + ORIGDIR + "_parse.job.err -o " + ORIGDIR + "_parse.job.out " + jobfile
+print execute
+sys.stdout.flush()
+
+clustnum = os.popen(execute, 'r')
+jobnum = clustnum.readline().strip()
+clustnum.close()
+ 
