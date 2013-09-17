@@ -35,6 +35,15 @@ ind2 = varfilename.rindex('.')
 outresultlist_genefeat = TEMP_CHROMRES + varfilename[ind+1:ind2] + "_genefeat_reslist.txt"
 allres_genefeat = open(outresultlist_genefeat, 'w')
 
+debugfile = varfilename[0:ind1+1] + "debug_file.txt"
+debug = open(debugfile, 'w');
+
+# conservation shell script that will copy and execute all of the qsub scripts for cnv_conservation.py 
+conservationfile = varfilename[0:ind1+1] + "conservation.sh"
+conservation = open(conservationfile, 'w');
+conservation.write("#!/bin/csh\n")
+                        
+
 
 JOB_FILES = [] 
 
@@ -62,8 +71,8 @@ while line != "":
 	    		#resfile_var = TEMP_CHROMRES + cur_chrom + "_var.txt"
             		#allres_var.write(resfile_var + "\n")	
 
-			# start the cnv_genefeat.py on this chromosome
-	    		command = "python /gpfs/home/gerikson/CNV_pipeline/scripts/cnv_genefeat.py " + outvarname + " " +  resfile_genefeat + " hg19"
+			# start the cnv_genefeat.py on this chromosom
+			command = "python /gpfs/home/gerikson/CNV_pipeline/scripts/cnv_genefeat.py "  + ORIGDIR + " " + outvarname + " " +  resfile_genefeat + " hg19"
 			jobfile = JOBDIR + cur_chrom + "_dist_annotate.job"
 			outjob = open(jobfile, 'w')
             		outjob.write("#!/bin/csh\n")			
@@ -80,12 +89,51 @@ while line != "":
             		jobnum = clustnum.readline().strip()
             		clustnum.close()
             		ind0 = jobfile.rindex("/")
-            		ind = jobnum.index(".")
+            		#ind = jobnum.index(".")
+			debug.write(jobnum + "\n")
+			#debug.close()
             		JOB_FILES.append(SUMDIR+jobfile[ind0+1:] + ".res")
 		
+			'''
+			Create the job file for the next process cnv_conservation.py that will start upon the succesfull completion of the genefeat	
+			'''
         		
+			resfile_conservation = TEMP_CHROMRES + cur_chrom + "_conservation.txt"
+			command_conservation = "python /gpfs/home/gerikson/CNV_pipeline/scripts/cnv_conservation.py " + resfile_genefeat + " " + cur_chrom  + " " + resfile_conservation + " hg19"
+			jobfile_conservation = JOBDIR + cur_chrom + "_conservation.job"			
+			outjob_conservation = open(jobfile_conservation, 'w')
+			outjob_conservation.write("#!/bin/csh\n")                    
+                        outjob_conservation.write("module load python-addons\n")
+                        outjob_conservation.write(command_conservation + "\n")
+			outjob_conservation.write("touch "+SUMDIR+cur_chrom+'_conservation_init.job.res\n')
+			outjob_conservation.close()
+			
+			execute = QSUB + " -W depends=afterok:" + jobnum + ' -e '+SUMDIR+cur_chrom+'_conservation_init.job.err -o '+SUMDIR+cur_chrom+'_conservation_init.job.out ' + jobfile_conservation
+                       
+			'''
+			copy this to the conservation file that will be executed once we escape the while loop
+			'''
+			conservation.write(execute + "\n")
+			#conservation.close()	
+			
+
+			
+			print execute
+                        sys.stdout.flush()
+
+                        clustnum = os.popen(execute, 'r')
+                        jobnum_conservation = clustnum.readline().strip()
+                        clustnum.close()
+                        ind0 = jobfile.rindex("/")
+                        debug.write("cnv_conservation.py " + jobnum_conservation + "\n")
+                        JOB_FILES.append(SUMDIR+jobfile_conservation[ind0+1:] + ".res")
+			
+
         	#temp_chr = line[1]
 		#print "currentc chrom is " + line[1]
+		'''
+		copying the original parsed file to temp/genefeat_temp 
+		'''
 		cur_chrom = line[1]
         	outvarname = TEMP_CHROMPATH + cur_chrom + "_temp.txt"
         	
@@ -96,6 +144,13 @@ while line != "":
 	line = invar.readline()
 	outvar.flush()
 
+
+debug.close()
+conservation.close()
+'''
+Execute the conservation script
+'''
+os.system("sh " + conservationfile)
 outvar.close()
 
-		
+	
