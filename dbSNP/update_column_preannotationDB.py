@@ -107,9 +107,7 @@ while line:
         """
         Insert the variants (for now)
 		"""        
-        annot = ""
-        for int in lin[8:]:
-                annot=annot+int+"@@"
+        annot = "@@".join(lin[8:])
         
         
         post = {'chr':CUR_CHROM,'beg':beg, 'end':end, 'type':vartype, 'ref':ref, 'alt':obs, 'annot':annot}

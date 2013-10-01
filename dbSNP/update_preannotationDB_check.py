@@ -58,10 +58,8 @@ while line:
     vartype = lin[4]
     ref = lin[5]
     obs = lin[6]
-    annot = "-"
-    for int in lin[8:]:
-        annot=annot+"@@"+int
-    
+    annot = "@@".join(lin[8:])
+
     '''
     verify is it's a valid annotation, mongo doesn't accept non usii carachters
     '''   
