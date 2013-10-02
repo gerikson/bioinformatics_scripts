@@ -100,7 +100,7 @@ while line:
         Change the columnNumber with new value or add a new value after /// if there is a value present already there 
         '''
 	try:
-		d = annot_res[columnNumber-8]
+		d = annot_res[columnNumber]
         	t = str(d)
         	if "-" in t:
                 	t = comment
@@ -170,8 +170,7 @@ while line:
                         print "Oops! Something bad happened."
 		annot = "@@".join(annot_res)
 		'''
-                Insert new value back into the database
-                """	
+                Insert new value back into the database	
                 '''
 		#print "Annotation is " + str(annot)      
         	post = {'chrom':CUR_CHROM,'beg':beg,'end':end,'ref':ref, 'alt':obs}

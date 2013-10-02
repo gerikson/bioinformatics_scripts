@@ -12,7 +12,7 @@ print time.asctime( time.localtime(time.time()) )
 
 """
 Takes 3 arguments: 
-1.filename_for_DB_update - in format: chr begin end vartype ref alt comment(with rsID) 
+1.filename_for_DB_update - in format: Haplotype chr begin end vartype ref alt comment(with rsID) 
 2.The column name you wish to update
 """
 
@@ -48,8 +48,8 @@ Querying mongo db, for now development
 '''
 
 con = pymongo.ReplicaSetConnection(host='stsia0808.cluster.net', replicaSet = 'rs0')
-constr = "con.development.test"
-#constr ="con.preannotation."+str(CUR_CHROM)
+#constr = "con.development.test"
+constr ="con.preannotation."+str(CUR_CHROM)
 a = eval(constr)
 PreAnnotationDB = a
 
@@ -73,8 +73,8 @@ while line:
     elif (lin[1] != CUR_CHROM):
         print "new chromosome " + lin[1]
         CUR_CHROM = lin[1]
-        a = eval("con.preannotation."+str(CUR_CHROM))
-        PreAnnotationDB = a
+        #a = eval("con.preannotation."+str(CUR_CHROM))
+        #PreAnnotationDB = a
     
     beg = lin[2]
     end = lin[3]
