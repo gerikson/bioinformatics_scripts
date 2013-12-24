@@ -53,8 +53,8 @@ Querying mongo db, for now development
 '''
 
 con = pymongo.ReplicaSetConnection(host='stsia0808.cluster.net', replicaSet = 'rs0')
-constr = "con.development.test"
-#constr ="con.preannotation."+str(CUR_CHROM)
+#constr = "con.development.test"
+constr ="con.preannotation."+str(CUR_CHROM)
 a = eval(constr)
 PreAnnotationDB = a
 line = invar.readline()

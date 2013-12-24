@@ -23,9 +23,6 @@ invar = open(varfilename)
 outvar = open(outfile, "w")
 
 
-
-line = invar.readline()
-
 while line:
 	"""
 	If this is the first line skip

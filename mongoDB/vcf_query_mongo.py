@@ -1,5 +1,5 @@
 #!/usr/bin/python
-import  os, gzip, sys, math, time, pymongo,json,bson
+import  os, sys, math, time, pymongo,json,bson
 '''
 For testing purposes exit program with ctrl+c
 '''
@@ -17,34 +17,19 @@ SCHORK_HOME = "/gpfs/home/nschork/"
 sys.path.append(SCHORK_HOME + "biopython-1.54/")
 from collections import defaultdict
 
-'''
+''''
 Script that extracts annotation from mongoDB given a vcf file
-Usage: 
-	python /gpfs/home/gerikson/vcf_query_mongo/vcf_query_mongo.py [input file] [output file] [another output for variants not found in db]
-
 '''
 varfilename = str(sys.argv[1])
-CUR_CHROM = "chr1" #str(sys.argv[2])
-resultfile = str(sys.argv[2])
-nfile = str(sys.argv[3])
+CUR_CHROM = str(sys.argv[2])
+resultfile = str(sys.argv[3])
+nfile = str(sys.argv[4])
 
-#check if this is a compressed file
-if varfilename.endswith("gz"):
-	infile = gzip.open(varfilename, 'rb')
-else:
-	infile = open(varfilename, 'r')
+infile = open(varfilename, 'r')
+outfile = open(resultfile, 'w' )
+blah = open(nfile, 'w')
 
-if resultfile.endswith("gz"):
-	outfile = gzip.open(resultfile, 'wb')
-else:
-	outfile = open(resultfile, 'w' )
-
-if nfile.endswith("gz"):
-	blah = gzip.open(nfile, 'wb')
-else:
-	blah = open(nfile, 'w')
-
-outfile.write("Haplotype	Chromosome	Begin	End	VarType	Reference	Allele	AN	AC	HWE	Genotypes	Gene	Gene_Type	Location	Distance	Coding_Impact	Protein_Pos	Original_AA	Allele_AA	Start~Stop_Dist	Prop_Cons_Affected_Upstream	Prop_Cons_Affected_Downstream	Trunc_Prediction	Conserved46way	Conserved46wayPlacental	Conserved46wayPrimates	ASW_minallele	CEU_minallele	CHB_minallele	CHD_minallele	GIH_minallele	JPT_minallele	LWK_minallele	MEX_minallele	MKK_minallele	TSI_minallele	YRI_minallele	1000GENOMES_AF	WELLDERLY_AF325	NHLBI	eQTL_genes	miRNA_BS_influenced	miRNA_BS_impact	miRNA_BS_direct	miRNA_BS_deltaG	miRNA_genomic	miRNA_folding_deltaG	miRNA_binding_deltaG	miRNA_top_targets_changed	Splice_Site_Pred	Splicing_Prediction(MaxENT)	ESE_sites	ESS_sites	Protein_Impact_Prediction(Polyphen)	Protein_Impact_Probability(Polyphen)	Protein_Impact_Prediction(SIFT)	Protein_Impact_Score(SIFT)	Protein_Domains	Protein_Domains_Impact(LogRE)	Protein_Impact_Prediction(Condel)	Protein_Impact_Probability(Condel)	TF_Binding_Sites	TFBS_deltaS	omimGene_ID~omimGene_association	Protein_Domain_Gene_Ontology	dbSNP_ID	HGMD_Variant~PubMedID	HGMD_Gene~disease_association	Genetic_Association_Database~PubMedID	PharmGKB_Database~Drug	Inheritance~Penetrance	Severity~Treatability	COSMIC_Variant~NumSamples	COSMIC_Gene~NumSamples	MSKCC_CancerGenes	Atlas_Oncology	Sanger_CancerGenes	Sanger_Germline_CancerGenes	Sanger_network-informed_CancerGenes~Pval	SegDup_Region	Gene_Symbol	DrugBank	Reactome_Pathway	Gene_Onotology	Disease_Ontology	ACMG_Score_Clinical~Disease_Entry~Explanation	ACMG_Score_Research~Disease_Entry~Explanation")
+outfile.write("Haplotype	Chromosome	Begin	End	VarType	Reference	Allele	Notes	Gene	Gene_Type	Location	Distance	Coding_Impact	Protein_Pos	Original_AA	Allele_AA	Start~Stop_Dist	Prop_Cons_Affected_Upstream	Prop_Cons_Affected_Downstream	Trunc_Prediction	Conserved46way	Conserved46wayPlacental	Conserved46wayPrimates	ASW_minallele	CEU_minallele	CHB_minallele	CHD_minallele	GIH_minallele	JPT_minallele	LWK_minallele	MEX_minallele	MKK_minallele	TSI_minallele	YRI_minallele	1000GENOMES_AF	WELLDERLY_AF325	NHLBI	eQTL_genes	miRNA_BS_influenced	miRNA_BS_impact	miRNA_BS_direct	miRNA_BS_deltaG	miRNA_genomic	miRNA_folding_deltaG	miRNA_binding_deltaG	miRNA_top_targets_changed	Splice_Site_Pred	Splicing_Prediction(MaxENT)	ESE_sites	ESS_sites	Protein_Impact_Prediction(Polyphen)	Protein_Impact_Probability(Polyphen)	Protein_Impact_Prediction(SIFT)	Protein_Impact_Score(SIFT)	Protein_Domains	Protein_Domains_Impact(LogRE)	Protein_Impact_Prediction(Condel)	Protein_Impact_Probability(Condel)	TF_Binding_Sites	TFBS_deltaS	omimGene_ID~omimGene_association	Protein_Domain_Gene_Ontology	dbSNP_ID	HGMD_Variant~PubMedID	HGMD_Gene~disease_association	Genetic_Association_Database~PubMedID	PharmGKB_Database~Drug	Inheritance~Penetrance	Severity~Treatability	COSMIC_Variant~NumSamples	COSMIC_Gene~NumSamples	MSKCC_CancerGenes	Atlas_Oncology	Sanger_CancerGenes	Sanger_Germline_CancerGenes	Sanger_network-informed_CancerGenes~Pval	SegDup_Region	Gene_Symbol	DrugBank	Reactome_Pathway	Gene_Onotology	Disease_Ontology	ACMG_Score_Clinical~Disease_Entry~Explanation	ACMG_Score_Research~Disease_Entry~Explanation")
 outfile.write("\n")
 print "START: "
 print time.asctime( time.localtime(time.time()) )
@@ -87,16 +72,12 @@ while line and True:
 		else:
 			genotypesHeader = genotypesHeader + parts[j] + "-"
 	t = len(parts) - genStart
-    	#outfile.write("Haplotype        Chromosome      Begin   End     VarType Reference       Allele  ")
-	#outfile.write(genotypesHeader)
-	#outfile.write("   Gene    Gene_Type       Location        Distance        Coding_Impact   Protein_Pos     Original_AA     Allele_AA       Start~Stop_Dist Prop_Cons_Affected_Upstream     Prop_Cons_Affected_Downstream   Trunc_Prediction        Conserved46way  Conserved46wayPlacental Conserved46wayPrimates  ASW_minallele   CEU_minallele   CHB_minallele   CHD_minallele   GIH_minallele   JPT_minallele   LWK_minallele   MEX_minallele   MKK_minallele   TSI_minallele   YRI_minallele   1000GENOMES_AF  WELLDERLY_AF325 NHLBI   eQTL_genes      miRNA_BS_influenced     miRNA_BS_impact miRNA_BS_direct miRNA_BS_deltaG miRNA_genomic   miRNA_folding_deltaG    miRNA_binding_deltaG    miRNA_top_targets_changed       Splice_Site_Pred        Splicing_Prediction(MaxENT)     ESE_sites       ESS_sites       Protein_Impact_Prediction(Polyphen)     Protein_Impact_Probability(Polyphen)    Protein_Impact_Prediction(SIFT) Protein_Impact_Score(SIFT)      Protein_Domains Protein_Domains_Impact(LogRE)   Protein_Impact_Prediction(Condel)       Protein_Impact_Probability(Condel)      TF_Binding_Sites        TFBS_deltaS     omimGene_ID~omimGene_association        Protein_Domain_Gene_Ontology    dbSNP_ID        HGMD_Variant~PubMedID   HGMD_Gene~disease_association   Genetic_Association_Database~PubMedID   PharmGKB_Database~Drug  Inheritance~Penetrance  Severity~Treatability   COSMIC_Variant~NumSamples       COSMIC_Gene~NumSamples  MSKCC_CancerGenes       Atlas_Oncology  Sanger_CancerGenes      Sanger_Germline_CancerGenes     Sanger_network-informed_CancerGenes~Pval        SegDup_Region   Gene_Symbol     DrugBank        Reactome_Pathway        Gene_Onotology  Disease_Ontology        ACMG_Score_Clinical~Disease_Entry~Explanation   ACMG_Score_Research~Disease_Entry~Explanation")
-	#outfile.write("\n")
-	print "Number of genotypes is: " + str(t) 
 	print "Genotypes are: " + genotypesHeader    
 	line = infile.readline()
         continue
    	 
     line = line.strip().split()
+    tline = line	
     if line[0].startswith("chr"):
 	chrom = line[0]
     else:			
@@ -126,32 +107,9 @@ while line and True:
 	genotype.append(gen[0])	
 
     obs = line[4].strip().split(',')
-    	 		
-    '''
-    Extract HWE and AN	
-    '''	
-    info = line[7].strip().split(";")
-    AN = "N/A" 
-    ACx = "N/A"
-    HWE = "N/A"			
-    for h in info:
-	if h.startswith("AN="):
-		AN = h.strip("AN=")
-		continue	
-	elif h.startswith("AC="):
-                ACx = h.strip("AC=")
-		continue
-	elif h.startswith("HWE="):
-                HWE = h.strip("HWE=")
-		continue 	
-			
     for index in range(1, len(obs)+1):
 	counter = counter + 1
-	ACarray = ACx.split(",")
-	try:
-		AC = ACarray[index - 1]
-	except:
-		AC = "N/A"
+	
 	if counter % 100000 == 0:
 		print "Variants: " + str(counter)
 	'''
@@ -254,47 +212,19 @@ while line and True:
         '''
 	Query the db
 	'''
-	'''
-	try:
-        	variant_list = PreAnnotationDB.find_one({'chrom':CUR_CHROM,'beg':str(begpos), 'end':str(endpos)})
-        	
-        	if str(variant_list) == "None":
-            		print "Variant not found! beg: " + str(begpos) + " beg: " + str(endpos) 
-	    		line = infile.readline()
-            		continue
-        	else:
-	    		#print "Found!"
-			found_var = found_var + 1
-			#gs = "-".join(genotype)
-        		#outfile.write(str(var_found) + "\t" + CUR_CHROM + "\t" +str(begpos) + "\t" + str(endpos) + "\t" + str(vartype) + "\t" + str(ref) + "\t" + str(var)+ "\t" + str(gs) + "\t")    
-            		outfile.write(str(var_found) + "\t" + CUR_CHROM + "\t" +str(begpos) + "\t" + str(endpos) + "\t" + str(vartype) + "\t" + str(ref) + "\t" + str(var)+ "\t")
-		for var,val in variant_list.items():
-                	
-                	#Split the annotation at @@ and copy to file
-              			
-                	if (var == 'annot'):
-                    		val = val.encode('ascii', 'ignore')
-                    		annot_res = val.split("@@")
-                    		s = len(annot_res)    
-                    		outfile.write("\t".join(annot_res[0:s]))
-            	
-    	except:
-		print "Exception"	
-        '''
-	variant_list = PreAnnotationDB.find_one({'chrom':CUR_CHROM,'beg':str(begpos), 'end':str(endpos)})
+	variant_list = PreAnnotationDB.find_one({'chrom':CUR_CHROM,'beg':str(begpos), 'end':str(endpos), 'type':vartype, 'ref':ref, 'alt':obs, 'annot': annot})
                 
         if str(variant_list) == "None":
-			not_found = not_found + 1
-                        #print "Variant not found! beg: " + str(begpos) + " beg: " + str(endpos) 
+			not_found = not_found + 1 
                         blah.write(str(not_found) + "\t" + CUR_CHROM + "\t" +str(begpos) + "\t" + str(endpos) + "\t" + str(vartype) + "\t" + str(ref) + "\t" + str(var)) #+ "\t" + str(gs) + "\t")
 			line = infile.readline()
                         continue
         else:
-                        #print "Found!"
+                        
                         found_var = found_var + 1
                         gs = "-".join(currentGen)
-                        outfile.write(str(found_var) + "\t" + CUR_CHROM + "\t" +str(begpos) + "\t" + str(endpos) + "\t" + str(vartype) + "\t" + str(ref) + "\t" + str(var)+ "\t" + str(AN) + "\t" + str(AC) + "\t" + str(HWE) + "\t" + str(gs) + "\t")    
-                        #outfile.write(str(found_var) + "\t" + CUR_CHROM + "\t" +str(begpos) + "\t" + str(endpos) + "\t" + str(vartype) + "\t" + str(ref) + "\t" + str(var)+ "\t")
+                        outfile.write(str(found_var) + "\t" + CUR_CHROM + "\t" +str(begpos) + "\t" + str(endpos) + "\t" + str(vartype) + "\t" + str(ref) + "\t" + str(var)+ "\t" + str(gs) + "\t")    
+
         		for var,val in variant_list.items():
                         	'''
                         	Split the annotation at @@ and copy to file
@@ -304,7 +234,9 @@ while line and True:
                                 	annot_res = val.split("@@")
                                 	s = len(annot_res)    
                                 	outfile.write("\t".join(annot_res[0:s]))
-
+			
+			ts = "~".join(tline)
+			outfile.write("\t" + ts)
 			outfile.write("\n")
         		outfile.flush()
         		line = infile.readline()
@@ -319,5 +251,5 @@ print "Variants found: " + str(found_var)
 print "END: ", time.time()
 print time.asctime( time.localtime(time.time()) )
 
-#sys.stdout.flush()
+sys.stdout.flush()
         
