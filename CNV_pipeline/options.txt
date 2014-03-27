@@ -1,7 +1,0 @@
-Condel
-DrugBank
-Reactome
-GO
-DrugBank
-Reactome
-ACMG
